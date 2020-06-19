@@ -16,27 +16,37 @@ var config = {
   }
 };
 
-var platforms;
 var player;
 var cursors;
 var gameOver = false;
+var groundLayer;
+var map;
+var tileset;
+var platforms;
 
 var game = new Phaser.Game(config);
 
 function preload () {
-  this.load.image('city', '../src/assets/city.png');
-  this.load.image('ground', '../src/assets/platform.png');
+
+  this.load.image('piso', '../src/assets/platform.png');
   this.load.spritesheet('robot','../src/assets/bot.png',
        { frameWidth: 52, frameHeight: 52 }
    );
+   this.load.image('background', '../src/assets/city.png');
+   this.load.image('tiles', '../src/assets/tilemap/tileset1.png');
+   this.load.tilemapTiledJSON('map', '../src/assets/tilemap/map1.json');
 }
 
 function create () {
-  this.add.image(400, 300, 'city');
 
-  platforms = this.physics.add.staticGroup();
+  this.add.image(400, 300, 'background');
 
-  platforms.create(400, 568, 'ground').setScale(2).refreshBody();
+  map = this.make.tilemap({ key: 'map' });
+  tileset = map.addTilesetImage('tileset1', 'tiles');
+  platforms = map.createStaticLayer('GroundLayer', tileset, 0, 100);
+  platforms.setScale(.2);
+
+  platforms.setCollisionByExclusion(-1, true);
 
   player = this.physics.add.sprite(100, 450, 'robot');
 
@@ -72,11 +82,11 @@ function create () {
   });
 
   this.anims.create({
-    key: 'shoot',
+    key: 'down',
     frames: this.anims.generateFrameNumbers('robot',
     {start: 16, end: 20}
   ),
-  frameRate: 10,
+  frameRate: 5,
   repeat: -1
   })
 
@@ -96,8 +106,6 @@ function create () {
   });
 
   cursors = this.input.keyboard.createCursorKeys();
-
-
   this.physics.add.collider(player,platforms);
 
 }
@@ -123,9 +131,9 @@ function update () {
     player.anims.play('jump', true);
   }
 
-  if (cursors.down.isDown) {
+  if (cursors.down.processKeyDown) {
     player.setVelocityX(0);
-    player.anims.play('shoot', true);
+    player.anims.play('down', true);
   }
 
 }
