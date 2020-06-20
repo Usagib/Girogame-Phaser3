@@ -1,6 +1,6 @@
 var config = {
   type: Phaser.AUTO,
-  width: 800,
+  width: 1024,
   height: 600,
   physics: {
     default: 'arcade',
@@ -23,6 +23,8 @@ var groundLayer;
 var map;
 var tileset;
 var platforms;
+var background;
+var camConfig;
 
 var game = new Phaser.Game(config);
 
@@ -39,7 +41,9 @@ function preload () {
 
 function create () {
 
-  this.add.image(400, 300, 'background');
+  this.add.image(0, 0, 'background').setOrigin(0);
+
+  this.cameras.main.setBounds(0, 0, 25600, 600);
 
   map = this.make.tilemap({ key: 'map' });
   tileset = map.addTilesetImage('tileset1', 'tiles');
@@ -51,8 +55,9 @@ function create () {
   player = this.physics.add.sprite(100, 450, 'robot');
 
   player.setBounce(0.2);
-  player.setCollideWorldBounds(true);
   player.body.setGravityY(300);
+
+  this.cameras.main.startFollow(player, true);
 
   this.anims.create({
     key: 'left',
@@ -64,7 +69,7 @@ function create () {
   });
 
   this.anims.create({
-    key: 'turn',
+    key: 'idle',
     frames: this.anims.generateFrameNumbers('robot',
       {start: 0, end: 6}
     ),
@@ -73,7 +78,7 @@ function create () {
   });
 
   this.anims.create({
-    key: 'right',
+    key: 'walk',
     frames: this.anims.generateFrameNumbers('robot',
       {start: 8, end: 14}
     ),
@@ -82,7 +87,7 @@ function create () {
   });
 
   this.anims.create({
-    key: 'down',
+    key: 'shoot',
     frames: this.anims.generateFrameNumbers('robot',
     {start: 16, end: 20}
   ),
@@ -111,29 +116,38 @@ function create () {
 }
 
 function update () {
+  var cam = this.cameras.main;
+
   if (gameOver) {
     return;
   }
 
   if (cursors.left.isDown) {
     player.setVelocityX(-160);
-    player.anims.play('left', true);
+    player.anims.play('walk', true);
+    cam.scrollX -= 4;
   } else if (cursors.right.isDown) {
     player.setVelocityX(160);
-    player.anims.play('right', true);
+    player.anims.play('walk', true);
+    cam.scrollX += 4;
   } else {
     player.setVelocityX(0);
-    player.anims.play('turn', true);
+    player.anims.play('idle', true);
   }
 
-  if (cursors.up.isDown) {
-    player.setVelocityY(-330);
+  if (cursors.up.isDown && player.body.onFloor()) {
+    player.setVelocityY(-450);
     player.anims.play('jump', true);
   }
 
-  if (cursors.down.processKeyDown) {
-    player.setVelocityX(0);
-    player.anims.play('down', true);
+  if (cursors.space.isDown) {
+    player.anims.play('shoot', true);
+  }
+
+  if (player.body.velocity.x > 0) {
+    player.setFlipX(false);
+  } else if (player.body.velocity.x < 0) {
+    player.setFlipX(true);
   }
 
 }
