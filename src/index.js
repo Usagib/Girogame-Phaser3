@@ -26,6 +26,7 @@ var platforms;
 var background;
 var camConfig;
 var coins;
+var fireBullets;
 
 var game = new Phaser.Game(config);
 
@@ -34,6 +35,9 @@ function preload () {
   this.load.image('piso', '../src/assets/platform.png');
   this.load.spritesheet('robot','../src/assets/bot.png',
        { frameWidth: 52, frameHeight: 52 }
+  );
+  this.load.spritesheet('firebullet', '../src/assets/firebullet.png',
+        { frameWidth: 40, frameHeight: 40 }
   );
   this.load.spritesheet('coin', '../src/assets/coin.png',
         { frameWidth: 120, frameHeight: 120 }
@@ -67,10 +71,20 @@ function create () {
     child.setBounce(0.5);
   });
 
+  fireBullets = this.physics.add.group();
+
   player.setBounce(0.2);
   player.body.setGravityY(300);
 
   this.cameras.main.startFollow(player, true);
+
+  this.anims.create({
+    key: 'fireshoot',
+    frames: this.anims.generateFrameNumbers('firebullet',
+      {start: 0, end: 8}
+    ),
+    frameRate: 5
+  })
 
   this.anims.create({
     key: 'coinidle',
@@ -135,10 +149,15 @@ function create () {
   cursors = this.input.keyboard.createCursorKeys();
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(coins, platforms);
+  this.physics.add.collider(fireBullets, platforms);
   this.physics.add.overlap(player, coins, collectCoin, null, this);
 
   function collectCoin (player, coin) {
     coin.disableBody(true, true);
+  }
+
+  function destroyBullet() {
+    this.disableBody(true, true);
   }
 
   this.anims.staggerPlay('coinidle', coins.getChildren(), 0.03);
@@ -147,7 +166,7 @@ function create () {
 
 function update () {
   var cam = this.cameras.main;
-
+    this.anims.staggerPlay('fireshoot', fireBullets.getChildren(), 0.03);
   if (gameOver) {
     return;
   }
@@ -172,6 +191,9 @@ function update () {
 
   if (cursors.space.isDown) {
     player.anims.play('shoot', true);
+    var shoot = fireBullets.create(player.x, player.y, 'firebullet');
+    shoot.setVelocityX(600);
+    shoot.body.setGravityY(-300);
   }
 
   if (player.body.velocity.x > 0) {
