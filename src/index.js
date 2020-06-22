@@ -28,6 +28,7 @@ var camConfig;
 var coins;
 var fireBullets;
 var whiteSlimes;
+var whiteSlimeTween;
 
 var game = new Phaser.Game(config);
 
@@ -94,7 +95,7 @@ function create () {
   this.anims.create({
     key: 'walkslime',
     frames: this.anims.generateFrameNumbers('whiteslime',
-      { start: 0, end: 11}
+      { start: 0, end: 15}
     ),
     frameRate: 6,
     repeat: -1
@@ -177,6 +178,17 @@ function create () {
   this.anims.staggerPlay('coinidle', coins.getChildren(), 0.03);
   this.anims.staggerPlay('walkslime', whiteSlimes.getChildren(), 0.03);
 
+  whiteSlimeTween = this.tweens.add({
+    targets: whiteSlimes.getChildren(),
+    props: {
+      x: {value: '+=100', duration: 1500}
+    },
+    ease: 'Sine.easeInOut',
+    yoyo: true,
+    repeat: -1
+  });
+
+  console.log(whiteSlimeTween);
 }
 
 function update () {
