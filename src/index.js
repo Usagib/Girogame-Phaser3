@@ -27,6 +27,7 @@ var background;
 var camConfig;
 var coins;
 var fireBullets;
+var whiteSlimes;
 
 var game = new Phaser.Game(config);
 
@@ -41,6 +42,9 @@ function preload () {
   );
   this.load.spritesheet('coin', '../src/assets/coin.png',
         { frameWidth: 120, frameHeight: 120 }
+  );
+  this.load.spritesheet('whiteslime', '../src/assets/slimewhite.png',
+        { frameWidth: 32, frameHeight: 32}
   );
    this.load.image('background', '../src/assets/city.png');
    this.load.image('tiles', '../src/assets/tilemap/tileset1.png');
@@ -73,10 +77,28 @@ function create () {
 
   fireBullets = this.physics.add.group();
 
+  whiteSlimes = this.physics.add.group({
+    key: 'whiteslime',
+    repeat: 10,
+    setXY: { x:225, y:0, stepX: 555 }
+  });
+  whiteSlimes.children.iterate(function (child) {
+    child.setScale(1.5);
+  });
+
   player.setBounce(0.2);
   player.body.setGravityY(300);
 
   this.cameras.main.startFollow(player, true);
+
+  this.anims.create({
+    key: 'walkslime',
+    frames: this.anims.generateFrameNumbers('whiteslime',
+      { start: 0, end: 11}
+    ),
+    frameRate: 6,
+    repeat: -1
+  })
 
   this.anims.create({
     key: 'fireshoot',
@@ -94,15 +116,6 @@ function create () {
     frameRate: 5,
     repeat: -1
   })
-
-  this.anims.create({
-    key: 'left',
-    frames: this.anims.generateFrameNumbers('robot',
-      {start: 8, end: 14}
-    ),
-    frameRate: 10,
-    repeat: -1
-  });
 
   this.anims.create({
     key: 'idle',
@@ -127,8 +140,7 @@ function create () {
     frames: this.anims.generateFrameNumbers('robot',
     {start: 16, end: 20}
   ),
-  frameRate: 5,
-  repeat: -1
+  frameRate: 30,
   })
 
   this.anims.create({
@@ -149,18 +161,21 @@ function create () {
   cursors = this.input.keyboard.createCursorKeys();
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(coins, platforms);
-  this.physics.add.collider(fireBullets, platforms);
+  this.physics.add.collider(whiteSlimes, platforms);
+  this.physics.add.collider(fireBullets, platforms, destroyBullet, null, this);
   this.physics.add.overlap(player, coins, collectCoin, null, this);
+
 
   function collectCoin (player, coin) {
     coin.disableBody(true, true);
   }
 
-  function destroyBullet() {
-    this.disableBody(true, true);
+  function destroyBullet(bullet, collider) {
+    bullet.disableBody(true, true);
   }
 
   this.anims.staggerPlay('coinidle', coins.getChildren(), 0.03);
+  this.anims.staggerPlay('walkslime', whiteSlimes.getChildren(), 0.03);
 
 }
 
@@ -189,12 +204,17 @@ function update () {
     player.anims.play('jump', true);
   }
 
-  if (cursors.space.isDown) {
-    player.anims.play('shoot', true);
-    var shoot = fireBullets.create(player.x, player.y, 'firebullet');
-    shoot.setVelocityX(600);
+  if (this.input.keyboard.checkDown(cursors.space, 300)) {
+    var shoot = fireBullets.create(player.x + 40, player.y + 15, 'firebullet');
+    if (cursors.left.isDown){
+      shoot.setVelocityX(-500);
+    } else {
+      shoot.setVelocityX(500);
+    }
     shoot.body.setGravityY(-300);
   }
+
+
 
   if (player.body.velocity.x > 0) {
     player.setFlipX(false);
