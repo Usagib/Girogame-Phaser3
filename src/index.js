@@ -28,7 +28,11 @@ var camConfig;
 var coins;
 var fireBullets;
 var whiteSlimes;
+var redSlimes;
 var whiteSlimeTween;
+var redSlimeTween;
+var greenSlimes;
+var littleSlimes;
 var fireSkulls;
 var fireSkullTween;
 var bgBack;
@@ -51,6 +55,15 @@ function preload () {
         { frameWidth: 120, frameHeight: 120 }
   );
   this.load.spritesheet('whiteslime', '../src/assets/slimewhite.png',
+        { frameWidth: 32, frameHeight: 32}
+  );
+  this.load.spritesheet('redslime', '../src/assets/slimered.png',
+        { frameWidth: 32, frameHeight: 32}
+  );
+  this.load.spritesheet('greenslime', '../src/assets/slimegreen.png',
+        { frameWidth: 32, frameHeight: 32}
+  );
+  this.load.spritesheet('littleslime', '../src/assets/littleslime.png',
         { frameWidth: 32, frameHeight: 32}
   );
   this.load.spritesheet('skull', '../src/assets/fire-skull.png',
@@ -125,6 +138,25 @@ function create () {
     child.setScale(1.5);
   });
 
+  redSlimes = this.physics.add.group({
+    key: 'redslime',
+    repeat: Phaser.Math.Between(20, 25),
+    setXY: { x:300, y:0, stepX: Phaser.Math.Between(200, 600), stepY: Phaser.Math.Between(0, 10) }
+  });
+  redSlimes.children.iterate(function (child) {
+    child.setScale(2);
+  });
+
+  this.time.addEvent({
+    delay: 5000,
+    callback: () => {
+      redSlimes.children.iterate(function (child) {
+        child.setVelocityY(-300);
+      });
+    },
+    loop: true
+  });
+
   fireSkulls = this.physics.add.group();
 
   this.time.addEvent({
@@ -137,6 +169,48 @@ function create () {
         child.setVelocityX(-160);
         child.anims.play('skullfly', true);
       });
+    },
+    loop: true
+  });
+
+  greenSlimes = this.physics.add.group();
+  littleSlimes = this.physics.add.group();
+
+  this.time.addEvent({
+    delay: 10000,
+    callback: () => {
+      console.log('greenslime created');
+      greenSlimes.create(Phaser.Math.Between(player.x+300, 7000), Phaser.Math.Between(500, 900), 'greenslime');
+      greenSlimes.children.iterate(function (child) {
+          child.setScale(1.7);
+          child.setGravityY(-305);
+          child.anims.play('floatslime', true);
+      });
+    },
+    loop: true
+  });
+
+  this.time.addEvent({
+    delay: 6000,
+    callback: () => {
+      greenSlimes.children.iterate(function (child) {
+        littleSlimes.create(child.x, child.y, 'littleslime');
+        littleSlimes.children.iterate(function (child) {
+          child.setScale(1.3);
+          child.setBounce(0.5);
+        })
+      });
+    },
+    loop: true
+  });
+
+  this.time.addEvent({
+    delay: 3000,
+    callback: () => {
+        littleSlimes.children.iterate(function (child) {
+          child.setVelocityY(-300);
+          child.setVelocityX(-30);
+        });
     },
     loop: true
   });
@@ -161,6 +235,24 @@ function create () {
       { start: 0, end: 15}
     ),
     frameRate: 6,
+    repeat: -1
+  })
+
+  this.anims.create({
+    key: 'jumpslime',
+    frames: this.anims.generateFrameNumbers('redslime',
+      { start: 0, end: 15}
+    ),
+    frameRate: 6,
+    repeat: -1
+  })
+
+  this.anims.create({
+    key: 'floatslime',
+    frames: this.anims.generateFrameNumbers('greenslime',
+      { start: 0, end: 15}
+    ),
+    frameRate: 12,
     repeat: -1
   })
 
@@ -226,6 +318,8 @@ function create () {
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(coins, platforms);
   this.physics.add.collider(whiteSlimes, platforms);
+  this.physics.add.collider(redSlimes, platforms);
+  this.physics.add.collider(littleSlimes, platforms);
   this.physics.add.collider(fireBullets, platforms, destroyBullet, null, this);
   this.physics.add.overlap(player, coins, collectCoin, null, this);
 
@@ -240,6 +334,7 @@ function create () {
 
   this.anims.staggerPlay('coinidle', coins.getChildren(), 0.03);
   this.anims.staggerPlay('walkslime', whiteSlimes.getChildren(), 0.03);
+  this.anims.staggerPlay('jumpslime', redSlimes.getChildren(), 0.03);
   this.anims.staggerPlay('skullfly', fireSkulls.getChildren(), 0.03);
 
   whiteSlimeTween = this.tweens.add({
@@ -251,6 +346,8 @@ function create () {
     yoyo: true,
     repeat: -1
   });
+
+
 
 }
 
