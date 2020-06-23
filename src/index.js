@@ -31,8 +31,10 @@ var whiteSlimes;
 var whiteSlimeTween;
 var fireSkulls;
 var fireSkullTween;
-var randY = Phaser.Math.Between(0, 600);
-var randX = Phaser.Math.Between(300, 5100);
+var bgBack;
+var bgMid1;
+var bgMid2;
+var bgFront;
 
 var game = new Phaser.Game(config);
 
@@ -54,21 +56,50 @@ function preload () {
   this.load.spritesheet('skull', '../src/assets/fire-skull.png',
         { frameWidth: 96, frameHeight: 112 }
   );
-   this.load.image('background', '../src/assets/city.png');
    this.load.image('tiles', '../src/assets/tilemap/tileset1.png');
    this.load.tilemapTiledJSON('map', '../src/assets/tilemap/map1.json');
+   this.load.image('background4', '../src/assets/background/back1.png');
+   this.load.image('background3', '../src/assets/background/farback.png');
+   this.load.image('background2', '../src/assets/background/far.png');
+   this.load.image('background1', '../src/assets/background/farfront.png');
 }
 
 function create () {
 
-  this.add.image(0, 0, 'background').setOrigin(0);
+  //------------------
+  let windowWidth = window.innerWidth;
+  let windowHeight = window.innerHeight;
 
-  this.cameras.main.setBounds(0, 0, 5130, 600);
+  let topBackgroundXOrigin = windowWidth / 2;
+  let topBackgroundYOrigin = (windowHeight / 5) * 1.5;
+  let topBackgroundHeight = (windowHeight / 5) * 3;
+
+  let imageBaseWidth = 272;
+  let imageBaseHeight = 150;
+  let heightRatio = topBackgroundHeight / imageBaseHeight;
+
+
+  bgBack = this.add.image(topBackgroundXOrigin, topBackgroundYOrigin, 'background4');
+  bgBack.setDisplaySize(windowWidth, topBackgroundHeight);
+
+  // Add each layer one by one
+  bgMid1 = this.add.tileSprite(topBackgroundXOrigin, topBackgroundYOrigin, imageBaseWidth, imageBaseHeight, 'background3');
+  bgMid1.setScale(heightRatio);
+
+  bgMid2 = this.add.tileSprite(topBackgroundXOrigin, topBackgroundYOrigin, imageBaseWidth, imageBaseHeight, 'background2');
+  bgMid2.setScale(heightRatio);
+
+  bgFront = this.add.tileSprite(topBackgroundXOrigin, topBackgroundYOrigin, imageBaseWidth, imageBaseHeight, 'background1');
+  bgFront.setScale(heightRatio);
+
+  // -----------------------
+
+  this.cameras.main.setBounds(0, 0, 7700, 950);
 
   map = this.make.tilemap({ key: 'map' });
   tileset = map.addTilesetImage('tileset1', 'tiles');
-  platforms = map.createStaticLayer('GroundLayer', tileset, 0, 100);
-  platforms.setScale(.2);
+  platforms = map.createStaticLayer('GroundLayer', tileset, 0, 200);
+  platforms.setScale(.3);
 
   platforms.setCollisionByExclusion(-1, true);
 
@@ -97,12 +128,12 @@ function create () {
   fireSkulls = this.physics.add.group();
 
   this.time.addEvent({
-    delay: 3000,
+    delay: 2500,
     callback: () => {
-      fireSkulls.create(Phaser.Math.Between(player.x+500, 5100), Phaser.Math.Between(0, 600), 'skull');
+      fireSkulls.create(Phaser.Math.Between(player.x+500, 6300), Phaser.Math.Between(0, 900), 'skull');
       fireSkulls.children.iterate(function (child) {
         child.setGravityY(-300);
-        child.setScale(.5);
+        child.setScale(.7);
         child.setVelocityX(-160);
         child.anims.play('skullfly', true);
       });
@@ -221,17 +252,14 @@ function create () {
     repeat: -1
   });
 
-/*  fireSkullTween = this.tweens.add({
-    targets: fireSkulls.getChildren(),
-    props: {
-      x: {value: '-=5700', duration: 50000}
-    },
-    ease: 'Sine.easeInOut',
-  });
-*/
 }
 
 function update () {
+
+  //------------------------
+
+  //------------------------
+
   var cam = this.cameras.main;
     this.anims.staggerPlay('fireshoot', fireBullets.getChildren(), 0.03);
   if (gameOver) {
@@ -242,23 +270,27 @@ function update () {
     player.setVelocityX(-160);
     player.anims.play('walk', true);
     cam.scrollX -= 4;
+    bgMid1.tilePositionX -= 0.1;
+    bgMid2.tilePositionX -= 0.2;
+    bgFront.tilePositionX -= 0.3;
   } else if (cursors.right.isDown) {
     player.setVelocityX(160);
     player.anims.play('walk', true);
     cam.scrollX += 4;
+    bgMid1.tilePositionX += 0.1;
+    bgMid2.tilePositionX += 0.2;
+    bgFront.tilePositionX += 0.3;
   } else {
     player.setVelocityX(0);
     player.anims.play('idle', true);
   }
 
   if (cursors.up.isDown && player.body.onFloor()) {
-    player.setVelocityY(-450);
+    player.setVelocityY(-550);
     player.anims.play('jump', true);
   }
 
   if (this.input.keyboard.checkDown(cursors.space, 300)) {
-    console.log(player.x);
-    console.log(player.y);
     var shoot = fireBullets.create(player.x + 40, player.y + 15, 'firebullet');
     if (cursors.left.isDown){
       shoot.setVelocityX(-500);
