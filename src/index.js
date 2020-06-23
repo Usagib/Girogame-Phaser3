@@ -40,6 +40,8 @@ var bgMid1;
 var bgMid2;
 var bgFront;
 var music;
+var boss;
+var bossBullets;
 
 var game = new Phaser.Game(config);
 
@@ -70,6 +72,16 @@ function preload () {
   this.load.spritesheet('skull', '../src/assets/fire-skull.png',
         { frameWidth: 96, frameHeight: 112 }
   );
+  this.load.spritesheet('bossidle', '../src/assets/bossidle.png',
+      { frameWidth: 160, frameHeight: 144 }
+  );
+  this.load.spritesheet('bossattack', '../src/assets/bossattack.png',
+      { frameWidth: 192, frameHeight: 176 }
+  );
+  this.load.spritesheet('bossbullet', '../src/assets/bossbullet.png',
+      { frameWidth: 130, frameHeight: 130 }
+  );
+
    this.load.image('tiles', '../src/assets/tilemap/tileset1.png');
    this.load.tilemapTiledJSON('map', '../src/assets/tilemap/map1.json');
    this.load.image('background4', '../src/assets/background/back1.png');
@@ -119,6 +131,7 @@ function create () {
   platforms.setCollisionByExclusion(-1, true);
 
   player = this.physics.add.sprite(100, 450, 'robot');
+  boss = this.physics.add.sprite(500, 0, 'bossidle');
   coins = this.physics.add.group({
     key: 'coin',
     repeat: 50,
@@ -159,6 +172,21 @@ function create () {
     loop: true
   });
 
+  this.time.addEvent({
+    delay: 3000,
+    callback: () => {
+      boss.anims.play('bossattack');
+      var bullet = bossBullets.create(boss.x, boss.y, 'bossbullet');
+      bossBullets.children.iterate( function (child) {
+        child.setScale(.3);
+        child.setGravityY(-290);
+        child.setVelocityX(-200);
+        child.anims.play('bossbullet', true);
+      });
+    },
+    loop: true
+  });
+
   fireSkulls = this.physics.add.group();
 
   this.time.addEvent({
@@ -177,6 +205,7 @@ function create () {
 
   greenSlimes = this.physics.add.group();
   littleSlimes = this.physics.add.group();
+  bossBullets = this.physics.add.group();
 
   this.time.addEvent({
     delay: 10000,
@@ -222,6 +251,28 @@ function create () {
   player.body.setGravityY(300);
 
   this.cameras.main.startFollow(player, true);
+
+  this.anims.create({
+    key: 'bossbullet',
+    frames: this.anims.generateFrameNumbers('bossbullet',
+      {start: 0, end: 6 }),
+    frameRate: 5,
+  });
+
+  this.anims.create({
+    key: 'bossattack',
+    frames: this.anims.generateFrameNumbers('bossattack',
+     {start: 0, end: 7}),
+     frameRate: 20,
+  });
+
+  this.anims.create({
+    key: 'bossidle',
+    frames: this.anims.generateFrameNumbers('bossidle',
+      {start: 0, end: 5}),
+    frameRate: 5,
+    repeat: -1
+  });
 
   this.anims.create({
     key: 'skullfly',
@@ -319,6 +370,7 @@ function create () {
   cursors = this.input.keyboard.createCursorKeys();
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(coins, platforms);
+  this.physics.add.collider(boss, platforms);
   this.physics.add.collider(whiteSlimes, platforms);
   this.physics.add.collider(redSlimes, platforms);
   this.physics.add.collider(littleSlimes, platforms);
@@ -338,6 +390,7 @@ function create () {
   this.anims.staggerPlay('walkslime', whiteSlimes.getChildren(), 0.03);
   this.anims.staggerPlay('jumpslime', redSlimes.getChildren(), 0.03);
   this.anims.staggerPlay('skullfly', fireSkulls.getChildren(), 0.03);
+  this.anims.staggerPlay('bossidle', boss, 0.03);
 
   whiteSlimeTween = this.tweens.add({
     targets: whiteSlimes.getChildren(),
