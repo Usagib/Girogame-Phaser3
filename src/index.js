@@ -29,6 +29,10 @@ var coins;
 var fireBullets;
 var whiteSlimes;
 var whiteSlimeTween;
+var fireSkulls;
+var fireSkullTween;
+var randY = Phaser.Math.Between(0, 600);
+var randX = Phaser.Math.Between(300, 5100);
 
 var game = new Phaser.Game(config);
 
@@ -47,6 +51,9 @@ function preload () {
   this.load.spritesheet('whiteslime', '../src/assets/slimewhite.png',
         { frameWidth: 32, frameHeight: 32}
   );
+  this.load.spritesheet('skull', '../src/assets/fire-skull.png',
+        { frameWidth: 96, frameHeight: 112 }
+  );
    this.load.image('background', '../src/assets/city.png');
    this.load.image('tiles', '../src/assets/tilemap/tileset1.png');
    this.load.tilemapTiledJSON('map', '../src/assets/tilemap/map1.json');
@@ -56,7 +63,7 @@ function create () {
 
   this.add.image(0, 0, 'background').setOrigin(0);
 
-  this.cameras.main.setBounds(0, 0, 25600, 600);
+  this.cameras.main.setBounds(0, 0, 5130, 600);
 
   map = this.make.tilemap({ key: 'map' });
   tileset = map.addTilesetImage('tileset1', 'tiles');
@@ -87,10 +94,35 @@ function create () {
     child.setScale(1.5);
   });
 
+  fireSkulls = this.physics.add.group();
+
+  this.time.addEvent({
+    delay: 3000,
+    callback: () => {
+      fireSkulls.create(Phaser.Math.Between(player.x+500, 5100), Phaser.Math.Between(0, 600), 'skull');
+      fireSkulls.children.iterate(function (child) {
+        child.setGravityY(-300);
+        child.setScale(.5);
+        child.setVelocityX(-160);
+        child.anims.play('skullfly', true);
+      });
+    },
+    loop: true
+  });
+
+
   player.setBounce(0.2);
   player.body.setGravityY(300);
 
   this.cameras.main.startFollow(player, true);
+
+  this.anims.create({
+    key: 'skullfly',
+    frames: this.anims.generateFrameNumbers('skull',
+      {start: 0, end: 7}),
+    frameRate: 10,
+    repeat: -1
+  })
 
   this.anims.create({
     key: 'walkslime',
@@ -177,6 +209,7 @@ function create () {
 
   this.anims.staggerPlay('coinidle', coins.getChildren(), 0.03);
   this.anims.staggerPlay('walkslime', whiteSlimes.getChildren(), 0.03);
+  this.anims.staggerPlay('skullfly', fireSkulls.getChildren(), 0.03);
 
   whiteSlimeTween = this.tweens.add({
     targets: whiteSlimes.getChildren(),
@@ -188,7 +221,14 @@ function create () {
     repeat: -1
   });
 
-  console.log(whiteSlimeTween);
+/*  fireSkullTween = this.tweens.add({
+    targets: fireSkulls.getChildren(),
+    props: {
+      x: {value: '-=5700', duration: 50000}
+    },
+    ease: 'Sine.easeInOut',
+  });
+*/
 }
 
 function update () {
@@ -217,6 +257,8 @@ function update () {
   }
 
   if (this.input.keyboard.checkDown(cursors.space, 300)) {
+    console.log(player.x);
+    console.log(player.y);
     var shoot = fireBullets.create(player.x + 40, player.y + 15, 'firebullet');
     if (cursors.left.isDown){
       shoot.setVelocityX(-500);
@@ -225,8 +267,6 @@ function update () {
     }
     shoot.body.setGravityY(-300);
   }
-
-
 
   if (player.body.velocity.x > 0) {
     player.setFlipX(false);
