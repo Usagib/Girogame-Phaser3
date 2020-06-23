@@ -39,6 +39,7 @@ var bgBack;
 var bgMid1;
 var bgMid2;
 var bgFront;
+var music;
 
 var game = new Phaser.Game(config);
 
@@ -75,37 +76,38 @@ function preload () {
    this.load.image('background3', '../src/assets/background/farback.png');
    this.load.image('background2', '../src/assets/background/far.png');
    this.load.image('background1', '../src/assets/background/farfront.png');
+
+  /* this.load.audio('rudebuster', [
+     '..src/assets/levelmusic.ogg',
+     '..src/assets/levelmusic.mp3'
+   ]); */
 }
 
 function create () {
 
-  //------------------
-  let windowWidth = window.innerWidth;
-  let windowHeight = window.innerHeight;
+/*  music = this.sound.add('rudebuster');
+  music.play({loop: true}); */
 
-  let topBackgroundXOrigin = windowWidth / 2;
-  let topBackgroundYOrigin = (windowHeight / 5) * 1.5;
-  let topBackgroundHeight = (windowHeight / 5) * 3;
-
-  let imageBaseWidth = 272;
-  let imageBaseHeight = 150;
-  let heightRatio = topBackgroundHeight / imageBaseHeight;
-
-
-  bgBack = this.add.image(topBackgroundXOrigin, topBackgroundYOrigin, 'background4');
-  bgBack.setDisplaySize(windowWidth, topBackgroundHeight);
+  bgBack = this.add.tileSprite(0, 0, config.width, config.height, 'background4');
+  bgBack.setOrigin(0,0);
+  bgBack.setScrollFactor(0);
+  bgBack.setScale(6);
 
   // Add each layer one by one
-  bgMid1 = this.add.tileSprite(topBackgroundXOrigin, topBackgroundYOrigin, imageBaseWidth, imageBaseHeight, 'background3');
-  bgMid1.setScale(heightRatio);
+  bgMid1 = this.add.tileSprite(0, 0, config.width, config.height, 'background3');
+  bgMid1.setOrigin(0,0);
+  bgMid1.setScrollFactor(0);
+  bgMid1.setScale(6);
 
-  bgMid2 = this.add.tileSprite(topBackgroundXOrigin, topBackgroundYOrigin, imageBaseWidth, imageBaseHeight, 'background2');
-  bgMid2.setScale(heightRatio);
+  bgMid2 = this.add.tileSprite(0, 0, config.width, config.height, 'background2');
+  bgMid2.setOrigin(0,0);
+  bgMid2.setScrollFactor(0);
+  bgMid2.setScale(6);
 
-  bgFront = this.add.tileSprite(topBackgroundXOrigin, topBackgroundYOrigin, imageBaseWidth, imageBaseHeight, 'background1');
-  bgFront.setScale(heightRatio);
-
-  // -----------------------
+  bgFront = this.add.tileSprite(0, 0, config.width, config.height, 'background1');
+  bgFront.setOrigin(0,0);
+  bgFront.setScrollFactor(0);
+  bgFront.setScale(6);
 
   this.cameras.main.setBounds(0, 0, 7700, 950);
 
