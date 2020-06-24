@@ -154,7 +154,7 @@ function create () {
   });
   whiteSlimes.children.iterate(function (child) {
     child.setScale(1.5);
-    child.setSize(2, 10, true)
+    child.setSize(2, 8, true);
   });
 
   redSlimes = this.physics.add.group({
@@ -164,6 +164,7 @@ function create () {
   });
   redSlimes.children.iterate(function (child) {
     child.setScale(2);
+    child.setSize(4, 10, true);
   });
 
   this.time.addEvent({
@@ -186,6 +187,7 @@ function create () {
         child.setGravityY(-300);
         child.setScale(.7);
         child.setVelocityX(-160);
+        child.setSize(4, 8, true);
         child.anims.play('skullfly', true);
       });
     },
@@ -204,6 +206,7 @@ function create () {
           child.setScale(1.7);
           child.setGravityY(-305);
           child.anims.play('floatslime', true);
+          child.setSize(4, 4, true);
       });
     },
     loop: true
@@ -217,6 +220,7 @@ function create () {
         littleSlimes.children.iterate(function (child) {
           child.setScale(1.3);
           child.setBounce(0.5);
+          child.setSize(1, 1, true)
         })
       });
     },
@@ -418,7 +422,7 @@ function create () {
   this.anims.staggerPlay('bossidle', boss, 0.03);
 
   this.time.addEvent({
-      delay: 1000,
+      delay: 528,
       callback: () => {
         boss.anims.play('bossattack');
         var bullet = bossBullets.create(boss.x, boss.y, 'bossbullet');
@@ -427,6 +431,7 @@ function create () {
           child.setGravityY(-290);
           child.setVelocityX(-200);
           child.setBounce(.8);
+          child.setSize(4, 4, true)
           child.anims.play('bossbullet', true);
         });
       },
@@ -435,7 +440,7 @@ function create () {
   bossTween = this.tweens.add({
           targets: boss,
           props: {
-            y: {value: '+=500', duration: 2000}
+            y: {value: '+=500', duration: 2125}
           },
           ease: 'sine.easeInOut',
           yoyo: true,
@@ -444,7 +449,7 @@ function create () {
   whiteSlimeTween = this.tweens.add({
     targets: whiteSlimes.getChildren(),
     props: {
-      x: {value: '+=100', duration: 1500}
+      x: {value: '+=85', duration: 1500}
     },
     ease: 'Sine.easeInOut',
     yoyo: true,
