@@ -131,7 +131,7 @@ function create () {
   platforms.setCollisionByExclusion(-1, true);
 
   player = this.physics.add.sprite(100, 450, 'robot');
-  boss = this.physics.add.sprite(7550, 350, 'bossidle');
+  boss = this.physics.add.sprite(7380, 300, 'bossidle');
   boss.setGravityY(-300);
   boss.setScale(1.3);
 
@@ -370,6 +370,13 @@ function create () {
   this.physics.add.collider(redSlimes, platforms);
   this.physics.add.collider(littleSlimes, platforms);
 
+  this.physics.add.collider(whiteSlimes, fireBullets, damageEnemy, null, this);
+  this.physics.add.collider(redSlimes, fireBullets, damageEnemy, null, this);
+  this.physics.add.collider(greenSlimes, fireBullets, damageEnemy, null, this);
+  this.physics.add.collider(littleSlimes, fireBullets, damageEnemy, null, this);
+  this.physics.add.collider(fireSkulls, fireBullets, damageEnemy, null, this);
+  this.physics.add.collider(boss, fireBullets, damageBoss, null, this);
+
   this.physics.add.overlap(player, whiteSlimes, playerDamage5, null, this);
   this.physics.add.overlap(player, redSlimes, playerDamage5, null, this);
   this.physics.add.overlap(player, littleSlimes, playerDamage1Disable, null, this);
@@ -379,6 +386,23 @@ function create () {
 
   this.physics.add.collider(fireBullets, platforms, destroyBullet, null, this);
   this.physics.add.overlap(player, coins, collectCoin, null, this);
+
+  function damageEnemy(enemy, bullet) {
+      enemy.setTint(0xff0000);
+      enemy.destroy();
+      bullet.disableBody(true, true);
+  };
+
+  function damageBoss(boss, bullet) {
+    boss.setTint(0xff0000);
+    bullet.disableBody(true, true);
+    this.time.addEvent({
+      delay: 200,
+      callback: () => {
+        boss.setTint(0xffffff);
+      },
+    })
+  }
 
   function destroyEnemy(bullet, platform) {
     bullet.disableBody(true, true);
