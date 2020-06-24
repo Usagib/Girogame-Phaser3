@@ -42,6 +42,7 @@ var bgFront;
 var music;
 var boss;
 var bossBullets;
+var bossTween;
 
 var game = new Phaser.Game(config);
 
@@ -89,16 +90,15 @@ function preload () {
    this.load.image('background2', '../src/assets/background/far.png');
    this.load.image('background1', '../src/assets/background/farfront.png');
 
-  /* this.load.audio('rudebuster', [
-     '..src/assets/levelmusic.ogg',
-     '..src/assets/levelmusic.mp3'
-   ]); */
+  this.load.audio('rudebuster',
+     '../src/assets/levelmusic.mp3'
+   );
 }
 
 function create () {
 
-/*  music = this.sound.add('rudebuster');
-  music.play({loop: true}); */
+  music = this.sound.add('rudebuster');
+  music.play({loop: true, volume: 0.1});
 
   bgBack = this.add.tileSprite(0, 0, config.width, config.height, 'background4');
   bgBack.setOrigin(0,0);
@@ -131,7 +131,9 @@ function create () {
   platforms.setCollisionByExclusion(-1, true);
 
   player = this.physics.add.sprite(100, 450, 'robot');
-  boss = this.physics.add.sprite(500, 0, 'bossidle');
+  boss = this.physics.add.sprite(7550, 350, 'bossidle');
+  boss.setGravityY(-300);
+  boss.setScale(1.3);
   coins = this.physics.add.group({
     key: 'coin',
     repeat: 50,
@@ -172,27 +174,12 @@ function create () {
     loop: true
   });
 
-  this.time.addEvent({
-    delay: 3000,
-    callback: () => {
-      boss.anims.play('bossattack');
-      var bullet = bossBullets.create(boss.x, boss.y, 'bossbullet');
-      bossBullets.children.iterate( function (child) {
-        child.setScale(.3);
-        child.setGravityY(-290);
-        child.setVelocityX(-200);
-        child.anims.play('bossbullet', true);
-      });
-    },
-    loop: true
-  });
-
   fireSkulls = this.physics.add.group();
 
   this.time.addEvent({
     delay: 2500,
     callback: () => {
-      fireSkulls.create(Phaser.Math.Between(player.x+500, 6300), Phaser.Math.Between(0, 900), 'skull');
+      fireSkulls.create(Phaser.Math.Between(2000, 6300), Phaser.Math.Between(0, 900), 'skull');
       fireSkulls.children.iterate(function (child) {
         child.setGravityY(-300);
         child.setScale(.7);
@@ -210,8 +197,7 @@ function create () {
   this.time.addEvent({
     delay: 10000,
     callback: () => {
-      console.log('greenslime created');
-      greenSlimes.create(Phaser.Math.Between(player.x+300, 7000), Phaser.Math.Between(500, 900), 'greenslime');
+      greenSlimes.create(Phaser.Math.Between(1500, 6000), Phaser.Math.Between(500, 900), 'greenslime');
       greenSlimes.children.iterate(function (child) {
           child.setScale(1.7);
           child.setGravityY(-305);
@@ -257,6 +243,8 @@ function create () {
     frames: this.anims.generateFrameNumbers('bossbullet',
       {start: 0, end: 6 }),
     frameRate: 5,
+    yoyo: true,
+    repeat: -1
   });
 
   this.anims.create({
@@ -371,6 +359,7 @@ function create () {
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(coins, platforms);
   this.physics.add.collider(boss, platforms);
+  this.physics.add.collider(bossBullets, platforms);
   this.physics.add.collider(whiteSlimes, platforms);
   this.physics.add.collider(redSlimes, platforms);
   this.physics.add.collider(littleSlimes, platforms);
@@ -385,6 +374,31 @@ function create () {
   function destroyBullet(bullet, collider) {
     bullet.disableBody(true, true);
   }
+
+    this.time.addEvent({
+      delay: 1000,
+      callback: () => {
+        boss.anims.play('bossattack');
+        var bullet = bossBullets.create(boss.x, boss.y, 'bossbullet');
+        bossBullets.children.iterate( function (child) {
+          child.setScale(.3);
+          child.setGravityY(-290);
+          child.setVelocityX(-200);
+          child.setBounce(.8);
+          child.anims.play('bossbullet', true);
+        });
+      },
+      loop: true
+    });
+      bossTween = this.tweens.add({
+          targets: boss,
+          props: {
+            y: {value: '+=500', duration: 2000}
+          },
+          ease: 'sine.easeInOut',
+          yoyo: true,
+          repeat: -1
+        });
 
   this.anims.staggerPlay('coinidle', coins.getChildren(), 0.03);
   this.anims.staggerPlay('walkslime', whiteSlimes.getChildren(), 0.03);
@@ -401,15 +415,11 @@ function create () {
     yoyo: true,
     repeat: -1
   });
-
-
-
 }
 
 function update () {
 
   //------------------------
-
   //------------------------
 
   var cam = this.cameras.main;
@@ -443,6 +453,7 @@ function update () {
   }
 
   if (this.input.keyboard.checkDown(cursors.space, 300)) {
+    console.log(player.x);
     var shoot = fireBullets.create(player.x + 40, player.y + 15, 'firebullet');
     if (cursors.left.isDown){
       shoot.setVelocityX(-500);
