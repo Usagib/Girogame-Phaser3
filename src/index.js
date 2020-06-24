@@ -98,7 +98,7 @@ function preload () {
 function create () {
 
   music = this.sound.add('rudebuster');
-  music.play({loop: true, volume: 0.1});
+  // music.play({loop: true, volume: 0.1});
 
   bgBack = this.add.tileSprite(0, 0, config.width, config.height, 'background4');
   bgBack.setOrigin(0,0);
@@ -134,6 +134,7 @@ function create () {
   boss = this.physics.add.sprite(7550, 350, 'bossidle');
   boss.setGravityY(-300);
   boss.setScale(1.3);
+
   coins = this.physics.add.group({
     key: 'coin',
     repeat: 50,
@@ -359,13 +360,47 @@ function create () {
   this.physics.add.collider(player, platforms);
   this.physics.add.collider(coins, platforms);
   this.physics.add.collider(boss, platforms);
-  this.physics.add.collider(bossBullets, platforms);
+  this.physics.add.collider(bossBullets, platforms, destroyBullet, null, this);
   this.physics.add.collider(whiteSlimes, platforms);
   this.physics.add.collider(redSlimes, platforms);
   this.physics.add.collider(littleSlimes, platforms);
+
+  this.physics.add.overlap(player, whiteSlimes, playerDamage5, null, this);
+  this.physics.add.overlap(player, redSlimes, playerDamage5, null, this);
+  this.physics.add.overlap(player, littleSlimes, playerDamage1Disable, null, this);
+  this.physics.add.overlap(player, fireSkulls, playerDamage1Disable, null, this);
+  this.physics.add.overlap(player, greenSlimes, playerDamage5, null, this);
+  this.physics.add.overlap(player, bossBullets, playerDamage1Disable, null, this);
+
   this.physics.add.collider(fireBullets, platforms, destroyBullet, null, this);
   this.physics.add.overlap(player, coins, collectCoin, null, this);
 
+  function destroyEnemy(bullet, platform) {
+    bullet.disableBody(true, true);
+  }
+
+  function playerDamage5(player, enemy) {
+    player.x-=15;
+    player.setTint(0xff0000);
+    this.time.addEvent({
+      delay: 200,
+      callback: () => {
+        player.x-=15;
+        player.setTint(0xffffff);
+      },
+    })
+  }
+
+  function playerDamage1Disable(player, enemy) {
+    player.setTint(0xff0000);
+    enemy.disableBody(true, true);
+    this.time.addEvent({
+      delay: 200,
+      callback: () => {
+        player.setTint(0xffffff);
+      },
+    })
+  }
 
   function collectCoin (player, coin) {
     coin.disableBody(true, true);
@@ -375,7 +410,13 @@ function create () {
     bullet.disableBody(true, true);
   }
 
-    this.time.addEvent({
+  this.anims.staggerPlay('coinidle', coins.getChildren(), 0.03);
+  this.anims.staggerPlay('walkslime', whiteSlimes.getChildren(), 0.03);
+  this.anims.staggerPlay('jumpslime', redSlimes.getChildren(), 0.03);
+  this.anims.staggerPlay('skullfly', fireSkulls.getChildren(), 0.03);
+  this.anims.staggerPlay('bossidle', boss, 0.03);
+
+  this.time.addEvent({
       delay: 1000,
       callback: () => {
         boss.anims.play('bossattack');
@@ -390,7 +431,7 @@ function create () {
       },
       loop: true
     });
-      bossTween = this.tweens.add({
+  bossTween = this.tweens.add({
           targets: boss,
           props: {
             y: {value: '+=500', duration: 2000}
@@ -399,13 +440,6 @@ function create () {
           yoyo: true,
           repeat: -1
         });
-
-  this.anims.staggerPlay('coinidle', coins.getChildren(), 0.03);
-  this.anims.staggerPlay('walkslime', whiteSlimes.getChildren(), 0.03);
-  this.anims.staggerPlay('jumpslime', redSlimes.getChildren(), 0.03);
-  this.anims.staggerPlay('skullfly', fireSkulls.getChildren(), 0.03);
-  this.anims.staggerPlay('bossidle', boss, 0.03);
-
   whiteSlimeTween = this.tweens.add({
     targets: whiteSlimes.getChildren(),
     props: {
