@@ -154,6 +154,7 @@ function create () {
   });
   whiteSlimes.children.iterate(function (child) {
     child.setScale(1.5);
+    child.setSize(2, 10, true)
   });
 
   redSlimes = this.physics.add.group({
