@@ -19,6 +19,11 @@ var config = {
 var player;
 var cursors;
 var gameOver = false;
+var score = 0;
+var scoreText;
+
+var healthText;
+
 var groundLayer;
 var map;
 var tileset;
@@ -40,6 +45,7 @@ var bgMid1;
 var bgMid2;
 var bgFront;
 var music;
+var bossMusic;
 var boss;
 var bossBullets;
 var bossTween;
@@ -90,15 +96,15 @@ function preload () {
    this.load.image('background2', '../src/assets/background/far.png');
    this.load.image('background1', '../src/assets/background/farfront.png');
 
-  this.load.audio('rudebuster',
-     '../src/assets/levelmusic.mp3'
-   );
+  this.load.audio('rudebuster','../src/assets/levelmusic.mp3');
+  this.load.audio('orchestrabuster', '../src/assets/bossmusic.mp3');
 }
 
 function create () {
 
   music = this.sound.add('rudebuster');
-  // music.play({loop: true, volume: 0.1});
+  bossMusic = this.sound.add('orchestrabuster');
+  music.play({loop: true, volume: 0.1});
 
   bgBack = this.add.tileSprite(0, 0, config.width, config.height, 'background4');
   bgBack.setOrigin(0,0);
@@ -121,6 +127,9 @@ function create () {
   bgFront.setScrollFactor(0);
   bgFront.setScale(6);
 
+  scoreText = this.add.text(16, 360, 'Score: 0', { fontSize: '32px', fill: '#fff' });
+  healthText = this.add.text(16, 420, 'Health: 0', { fontSize: '32px', fill: '#fff' });
+
   this.cameras.main.setBounds(0, 0, 7700, 950);
 
   map = this.make.tilemap({ key: 'map' });
@@ -131,13 +140,15 @@ function create () {
   platforms.setCollisionByExclusion(-1, true);
 
   player = this.physics.add.sprite(100, 450, 'robot');
+  player.health = 100;
   boss = this.physics.add.sprite(7380, 300, 'bossidle');
   boss.setGravityY(-300);
   boss.setScale(1.3);
+  boss.health = 50;
 
   coins = this.physics.add.group({
     key: 'coin',
-    repeat: 50,
+    repeat: 200,
     setXY: { x:100, y:0, stepX: 100 }
   });
   coins.children.iterate(function (child) {
@@ -153,6 +164,7 @@ function create () {
     setXY: { x:225, y:0, stepX: 555 }
   });
   whiteSlimes.children.iterate(function (child) {
+    child.health = 3;
     child.setScale(1.5);
     child.setSize(2, 8, true);
   });
@@ -163,6 +175,7 @@ function create () {
     setXY: { x:300, y:0, stepX: Phaser.Math.Between(200, 600), stepY: Phaser.Math.Between(0, 10) }
   });
   redSlimes.children.iterate(function (child) {
+    child.health = 3;
     child.setScale(2);
     child.setSize(4, 10, true);
   });
@@ -189,6 +202,7 @@ function create () {
         child.setVelocityX(-160);
         child.setSize(4, 8, true);
         child.anims.play('skullfly', true);
+        child.health = 2;
       });
     },
     loop: true
@@ -207,6 +221,7 @@ function create () {
           child.setGravityY(-305);
           child.anims.play('floatslime', true);
           child.setSize(4, 4, true);
+          child.health = 5;
       });
     },
     loop: true
@@ -221,6 +236,7 @@ function create () {
           child.setScale(1.3);
           child.setBounce(0.5);
           child.setSize(1, 1, true)
+          child.health = 1;
         })
       });
     },
@@ -370,69 +386,149 @@ function create () {
   this.physics.add.collider(redSlimes, platforms);
   this.physics.add.collider(littleSlimes, platforms);
 
-  this.physics.add.collider(whiteSlimes, fireBullets, damageEnemy, null, this);
-  this.physics.add.collider(redSlimes, fireBullets, damageEnemy, null, this);
-  this.physics.add.collider(greenSlimes, fireBullets, damageEnemy, null, this);
-  this.physics.add.collider(littleSlimes, fireBullets, damageEnemy, null, this);
-  this.physics.add.collider(fireSkulls, fireBullets, damageEnemy, null, this);
+  this.physics.add.overlap(whiteSlimes, fireBullets, damageEnemy, null, this);
+  this.physics.add.overlap(redSlimes, fireBullets, damageEnemy, null, this);
+  this.physics.add.overlap(greenSlimes, fireBullets, damageEnemy, null, this);
+  this.physics.add.overlap(littleSlimes, fireBullets, damageEnemy, null, this);
+  this.physics.add.overlap(fireSkulls, fireBullets, damageEnemy, null, this);
   this.physics.add.collider(boss, fireBullets, damageBoss, null, this);
 
   this.physics.add.overlap(player, whiteSlimes, playerDamage5, null, this);
-  this.physics.add.overlap(player, redSlimes, playerDamage5, null, this);
-  this.physics.add.overlap(player, littleSlimes, playerDamage1Disable, null, this);
-  this.physics.add.overlap(player, fireSkulls, playerDamage1Disable, null, this);
-  this.physics.add.overlap(player, greenSlimes, playerDamage5, null, this);
-  this.physics.add.overlap(player, bossBullets, playerDamage1Disable, null, this);
+  this.physics.add.overlap(player, redSlimes, playerDamage10, null, this);
+  this.physics.add.overlap(player, littleSlimes, playerDamage5Disable, null, this);
+  this.physics.add.overlap(player, fireSkulls, playerDamage10Disable, null, this);
+  this.physics.add.overlap(player, greenSlimes, playerDamage10, null, this);
+  this.physics.add.overlap(player, bossBullets, playerDamage10Disable, null, this);
 
   this.physics.add.collider(fireBullets, platforms, destroyBullet, null, this);
   this.physics.add.overlap(player, coins, collectCoin, null, this);
 
   function damageEnemy(enemy, bullet) {
+      enemy.health-=1;
       enemy.setTint(0xff0000);
-      enemy.destroy();
-      bullet.disableBody(true, true);
-  };
+      this.time.addEvent({
+        delay: 200,
+        callback: () => {
+          enemy.setTint(0xffffff);
+        },
+      });
+      bullet.destroy();
+      if (enemy.health <= 0){
+        score += 5;
+        enemy.destroy();
+        coins.create(enemy.x, enemy.y, 'coin');
+        coins.children.iterate( function (child) {
+          child.setScale(.2);
+          child.anims.play('coinidle', true);
+        });
+      }
+  }
 
   function damageBoss(boss, bullet) {
+    boss.health-=1;
     boss.setTint(0xff0000);
-    bullet.disableBody(true, true);
+    console.log(boss.health);
     this.time.addEvent({
       delay: 200,
       callback: () => {
         boss.setTint(0xffffff);
       },
-    })
+    });
+    bullet.destroy();
+    if (boss.health === 47){
+      music.pause();
+      bossMusic.play({loop:true, volume: 0.1});
+    }
+    if (boss.health <= 0){
+      boss.destroy();
+      this.physics.pause();
+      score += 200;
+    }
   }
 
-  function destroyEnemy(bullet, platform) {
-    bullet.disableBody(true, true);
+  function playerDamage10(player, enemy) {
+    player.x-=20;
+    score -= 50;
+    player.setTint(0xff0000);
+    player.health -= 10;
+    console.log(player.health);
+    this.time.addEvent({
+      delay: 100,
+      callback: () => {
+        player.x-=25;
+        player.setTint(0xffffff);
+      },
+    });
+    if (player.health <= 0){
+      score -= 1000;
+      gameOver = true;
+      console.log('game over');
+    }
   }
 
   function playerDamage5(player, enemy) {
     player.x-=15;
     player.setTint(0xff0000);
+    player.health -= 5;
+    score -= 50;
+    console.log(player.health);
     this.time.addEvent({
       delay: 200,
       callback: () => {
         player.x-=15;
         player.setTint(0xffffff);
       },
-    })
+    });
+    if (player.health <= 0){
+      gameOver = true;
+      console.log('game over');
+    }
   }
 
-  function playerDamage1Disable(player, enemy) {
+  function playerDamage10Disable(player, enemy) {
+    player.x-=15;
     player.setTint(0xff0000);
-    enemy.disableBody(true, true);
+    player.health -= 10;
+    score -= 50;
+    enemy.destroy();
+    console.log(player.health);
     this.time.addEvent({
       delay: 200,
       callback: () => {
+        player.x-=15;
         player.setTint(0xffffff);
       },
-    })
+    });
+    if (player.health <= 0){
+      gameOver = true;
+      console.log('game over');
+      console.log(score);
+    }
+  }
+
+  function playerDamage5Disable(player, enemy) {
+    player.x-=15;
+    player.setTint(0xff0000);
+    player.health -= 5;
+    score -= 50;
+    enemy.destroy();
+    console.log(player.health);
+    this.time.addEvent({
+      delay: 200,
+      callback: () => {
+        player.x-=15;
+        player.setTint(0xffffff);
+      },
+    });
+    if (player.health <= 0){
+      gameOver = true;
+      console.log('game over');
+    }
   }
 
   function collectCoin (player, coin) {
     coin.disableBody(true, true);
+    score += 10;
   }
 
   function destroyBullet(bullet, collider) {
@@ -443,7 +539,6 @@ function create () {
   this.anims.staggerPlay('walkslime', whiteSlimes.getChildren(), 0.03);
   this.anims.staggerPlay('jumpslime', redSlimes.getChildren(), 0.03);
   this.anims.staggerPlay('skullfly', fireSkulls.getChildren(), 0.03);
-  this.anims.staggerPlay('bossidle', boss, 0.03);
 
   this.time.addEvent({
       delay: 528,
@@ -479,9 +574,20 @@ function create () {
     yoyo: true,
     repeat: -1
   });
+
+
+
 }
 
 function update () {
+
+  if(healthText.x >= player.x + 550) {
+    scoreText.x = player.x - 700;
+    healthText.x = player.x - 700;
+  }
+
+  scoreText.setText('Score: ' + score);
+  healthText.setText('Health: ' + player.health);
 
   //------------------------
   //------------------------
@@ -496,6 +602,8 @@ function update () {
     player.setVelocityX(-160);
     player.anims.play('walk', true);
     cam.scrollX -= 4;
+    scoreText.x-=2.5;
+    healthText.x-=2.5;
     bgMid1.tilePositionX -= 0.1;
     bgMid2.tilePositionX -= 0.2;
     bgFront.tilePositionX -= 0.3;
@@ -503,6 +611,8 @@ function update () {
     player.setVelocityX(160);
     player.anims.play('walk', true);
     cam.scrollX += 4;
+    scoreText.x+= 4;
+    healthText.x+= 4;
     bgMid1.tilePositionX += 0.1;
     bgMid2.tilePositionX += 0.2;
     bgFront.tilePositionX += 0.3;
