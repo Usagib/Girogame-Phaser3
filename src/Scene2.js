@@ -11,6 +11,7 @@ export default class Scene2 extends Phaser.Scene {
 
     this.music = this.sound.add('rudebuster');
     this.bossMusic = this.sound.add('orchestrabuster');
+
     this.music.play({loop: true, volume: 0.1});
 
     this.bgBack = this.add.tileSprite(0, 0, 800, 600, 'background4');
@@ -47,6 +48,7 @@ export default class Scene2 extends Phaser.Scene {
 
     this.player = this.physics.add.sprite(100, 450, 'robot');
     this.player.health = 100;
+    this.player.setCollideWorldBounds(true);
     this.boss = this.physics.add.sprite(7380, 300, 'bossidle');
     this.boss.setGravityY(-300);
     this.boss.setScale(1.3);
@@ -57,7 +59,7 @@ export default class Scene2 extends Phaser.Scene {
       repeat: 200,
       setXY: { x:100, y:0, stepX: 100 }
     });
-    this.coins.children.iterate(function (child) {
+    this.coins.children.iterate( (child) => {
       child.setScale(.2);
       child.setBounce(0.5);
     });
@@ -69,7 +71,7 @@ export default class Scene2 extends Phaser.Scene {
       repeat: Phaser.Math.Between(20, 30),
       setXY: { x:Phaser.Math.Between(300, 400), y:0, stepX: Phaser.Math.Between(100, 300) }
     });
-    this.whiteSlimes.children.iterate(function (child) {
+    this.whiteSlimes.children.iterate( (child) => {
       child.health = 3;
       child.setScale(1.5);
       child.setSize(2, 8, true);
@@ -80,59 +82,16 @@ export default class Scene2 extends Phaser.Scene {
       repeat: Phaser.Math.Between(20, 35),
       setXY: { x:300, y:0, stepX: Phaser.Math.Between(200, 600), stepY: Phaser.Math.Between(0, 10) }
     });
-    this.redSlimes.children.iterate(function (child) {
+    this.redSlimes.children.iterate( (child) => {
       child.health = 3;
       child.setScale(2);
       child.setSize(4, 10, true);
     });
 
-    this.time.addEvent({
-      delay: 2000,
-      callback: () => {
-        this.redSlimes.children.iterate(function (child) {
-          child.setVelocityY(-300);
-        });
-      },
-      loop: true
-    });
-
     this.fireSkulls = this.physics.add.group();
-
-    this.time.addEvent({
-      delay: 1000,
-      callback: () => {
-        this.fireSkulls.create(Phaser.Math.Between(2000, 7300), Phaser.Math.Between(0, 900), 'skull');
-        this.fireSkulls.children.iterate(function (child) {
-          child.setGravityY(-300);
-          child.setScale(.7);
-          child.setVelocityX(-160);
-          child.setSize(4, 8, true);
-          child.anims.play('skullfly', true);
-          child.health = 2;
-        });
-      },
-      loop: true
-    });
-
     this.greenSlimes = this.physics.add.group();
     this.littleSlimes = this.physics.add.group();
     this.bossBullets = this.physics.add.group();
-
-    this.time.addEvent({
-      delay: 1000,
-      callback: () => {
-        this.greenSlimes.create(Phaser.Math.Between(1500, 7300), Phaser.Math.Between(800, 1000), 'greenslime');
-        this.greenSlimes.children.iterate(function (child) {
-            child.setScale(1.7);
-            child.setGravityY(-305);
-            child.anims.play('floatslime', true);
-            child.setSize(4, 4, true);
-            child.health = 2;
-        });
-      },
-      loop: true
-    });
-
 
     this.player.setBounce(0.2);
     this.player.body.setGravityY(300);
@@ -277,34 +236,7 @@ export default class Scene2 extends Phaser.Scene {
         }
     };
 
-    this.cursors = this.input.keyboard.createCursorKeys();
-    this.physics.add.collider(this.player, this.platforms);
-    this.physics.add.collider(this.coins, this.platforms);
-    this.physics.add.collider(this.boss, this.platforms);
-    this.physics.add.collider(this.bossBullets, this.platforms, destroyBullet, null, this);
-    this.physics.add.collider(this.whiteSlimes, this.platforms);
-    this.physics.add.collider(this.redSlimes, this.platforms);
-    this.physics.add.collider(this.littleSlimes, this.platforms);
-
-    this.physics.add.overlap(this.whiteSlimes, this.fireBullets, damageEnemy, null, this);
-    this.physics.add.overlap(this.redSlimes, this.fireBullets, damageEnemy, null, this);
-    this.physics.add.overlap(this.greenSlimes, this.fireBullets, damageEnemy, null, this);
-    this.physics.add.overlap(this.littleSlimes, this.fireBullets, damageEnemy, null, this);
-    this.physics.add.overlap(this.fireSkulls, this.fireBullets, damageEnemy, null, this);
-    this.physics.add.collider(this.boss, this.fireBullets, damageBoss, null, this);
-
-    this.physics.add.overlap(this.player, this.whiteSlimes, playerDamage5, null, this);
-    this.physics.add.overlap(this.player, this.redSlimes, playerDamage10, null, this);
-    this.physics.add.overlap(this.player, this.littleSlimes, playerDamage5Disable, null, this);
-    this.physics.add.overlap(this.player, this.fireSkulls, playerDamage10Disable, null, this);
-    this.physics.add.overlap(this.player, this.greenSlimes, playerDamage10, null, this);
-    this.physics.add.overlap(this.player, this.bossBullets, playerDamage10Disable, null, this);
-
-    this.physics.add.collider(this.fireBullets, this.platforms, destroyBullet, null, this);
-    this.physics.add.overlap(this.player, this.coins, collectCoin, null, this);
-
-
-    function damageBoss(boss, bullet) {
+    const damageBoss = (boss, bullet) => {
       boss.health-=1;
       boss.setTint(0xff0000);
       console.log(boss.health);
@@ -326,9 +258,9 @@ export default class Scene2 extends Phaser.Scene {
         this.bossMusic.pause();
         this.scene.start('gameWin', {score : this.score});
       }
-    }
+    };
 
-    function playerDamage10(player, enemy) {
+    const playerDamage10 = (player, enemy) => {
       player.x-=20;
       this.score -= 50;
       player.setTint(0xff0000);
@@ -346,9 +278,9 @@ export default class Scene2 extends Phaser.Scene {
         this.gameOver = true;
         console.log('game over');
       }
-    }
+    };
 
-    function playerDamage5(player, enemy) {
+    const playerDamage5 = (player, enemy) => {
       player.x-=15;
       player.setTint(0xff0000);
       player.health -= 5;
@@ -365,9 +297,9 @@ export default class Scene2 extends Phaser.Scene {
         this.gameOver = true;
         console.log('game over');
       }
-    }
+    };
 
-    function playerDamage10Disable(player, enemy) {
+    const playerDamage10Disable = (player, enemy) => {
       player.x-=15;
       player.setTint(0xff0000);
       player.health -= 10;
@@ -384,9 +316,9 @@ export default class Scene2 extends Phaser.Scene {
       if (player.health <= 0){
         this.gameOver = true;
       }
-    }
+    };
 
-    function playerDamage5Disable(player, enemy) {
+    const playerDamage5Disable = (player, enemy) => {
       player.x-=15;
       player.setTint(0xff0000);
       player.health -= 5;
@@ -404,16 +336,42 @@ export default class Scene2 extends Phaser.Scene {
         this.gameOver = true;
         console.log('game over');
       }
-    }
+    };
 
-    function collectCoin (player, coin) {
+    const collectCoin = (player, coin) => {
       coin.disableBody(true, true);
       this.score += 10;
-    }
+    };
 
-    function destroyBullet(bullet, collider) {
+    const destroyBullet = (bullet, collider) => {
       bullet.disableBody(true, true);
-    }
+    };
+
+    this.cursors = this.input.keyboard.createCursorKeys();
+
+    this.physics.add.collider(this.player, this.platforms);
+    this.physics.add.collider(this.coins, this.platforms);
+    this.physics.add.collider(this.boss, this.platforms);
+    this.physics.add.collider(this.bossBullets, this.platforms, destroyBullet, null, this);
+    this.physics.add.collider(this.whiteSlimes, this.platforms);
+    this.physics.add.collider(this.redSlimes, this.platforms);
+    this.physics.add.collider(this.littleSlimes, this.platforms);
+    this.physics.add.collider(this.fireBullets, this.platforms, destroyBullet, null, this);
+    this.physics.add.collider(this.boss, this.fireBullets, damageBoss, null, this);
+
+    this.physics.add.overlap(this.whiteSlimes, this.fireBullets, damageEnemy, null, this);
+    this.physics.add.overlap(this.redSlimes, this.fireBullets, damageEnemy, null, this);
+    this.physics.add.overlap(this.greenSlimes, this.fireBullets, damageEnemy, null, this);
+    this.physics.add.overlap(this.littleSlimes, this.fireBullets, damageEnemy, null, this);
+    this.physics.add.overlap(this.fireSkulls, this.fireBullets, damageEnemy, null, this);
+    this.physics.add.overlap(this.player, this.whiteSlimes, playerDamage5, null, this);
+    this.physics.add.overlap(this.player, this.redSlimes, playerDamage10, null, this);
+    this.physics.add.overlap(this.player, this.littleSlimes, playerDamage5Disable, null, this);
+    this.physics.add.overlap(this.player, this.fireSkulls, playerDamage10Disable, null, this);
+    this.physics.add.overlap(this.player, this.greenSlimes, playerDamage10, null, this);
+    this.physics.add.overlap(this.player, this.bossBullets, playerDamage10Disable, null, this);
+    this.physics.add.overlap(this.player, this.coins, collectCoin, null, this);
+
 
     this.anims.staggerPlay('coinidle', this.coins.getChildren(), 0.03);
     this.anims.staggerPlay('walkslime', this.whiteSlimes.getChildren(), 0.03);
@@ -427,7 +385,7 @@ export default class Scene2 extends Phaser.Scene {
           this.bullet = this.bossBullets.create(this.boss.x, this.boss.y, 'bossbullet');
           this.bullet = this.bossBullets.create(this.boss.x+10, this.boss.y+20, 'bossbullet');
           this.bullet = this.bossBullets.create(this.boss.x+10, this.boss.y-20, 'bossbullet');
-          this.bossBullets.children.iterate( function (child) {
+          this.bossBullets.children.iterate( (child) => {
             child.setScale(.3);
             child.setGravityY(-290);
             child.setVelocityX(-200);
@@ -438,6 +396,45 @@ export default class Scene2 extends Phaser.Scene {
         },
         loop: true
       });
+    this.time.addEvent({
+        delay: 1000,
+        callback: () => {
+          this.greenSlimes.create(Phaser.Math.Between(1500, 7300), Phaser.Math.Between(800, 1000), 'greenslime');
+          this.greenSlimes.children.iterate( (child) => {
+              child.setScale(1.7);
+              child.setGravityY(-305);
+              child.anims.play('floatslime', true);
+              child.setSize(4, 4, true);
+              child.health = 2;
+          });
+        },
+        loop: true
+      });
+    this.time.addEvent({
+        delay: 2000,
+        callback: () => {
+          this.redSlimes.children.iterate( (child) => {
+            child.setVelocityY(-300);
+          });
+        },
+        loop: true
+      });
+    this.time.addEvent({
+        delay: 1000,
+        callback: () => {
+          this.fireSkulls.create(Phaser.Math.Between(2000, 7300), Phaser.Math.Between(0, 900), 'skull');
+          this.fireSkulls.children.iterate( (child) => {
+            child.setGravityY(-300);
+            child.setScale(.7);
+            child.setVelocityX(-160);
+            child.setSize(4, 8, true);
+            child.anims.play('skullfly', true);
+            child.health = 2;
+          });
+        },
+        loop: true
+      });
+
     this.bossTween = this.tweens.add({
             targets: this.boss,
             props: {
@@ -471,6 +468,7 @@ export default class Scene2 extends Phaser.Scene {
     this.anims.staggerPlay('fireshoot', this.fireBullets.getChildren(), 0.03);
 
     if (this.gameOver) {
+      this.bossMusic.pause();
       this.music.pause();
       this.scene.start('gameOver', {score : this.score});
       return;
@@ -480,8 +478,8 @@ export default class Scene2 extends Phaser.Scene {
       this.player.setVelocityX(-160);
       this.player.anims.play('walk', true);
       this.cam.scrollX -= 4;
-      this.scoreText.x-=2.5;
-      this.healthText.x-=2.5;
+      this.scoreText.x+=4;
+      this.healthText.x+=4;
       this.bgMid1.tilePositionX -= 0.1;
       this.bgMid2.tilePositionX -= 0.2;
       this.bgFront.tilePositionX -= 0.3;
