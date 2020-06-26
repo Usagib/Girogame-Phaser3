@@ -90,9 +90,13 @@ export default class Scene1 extends Phaser.Scene {
     this.bgFront.tilePositionX += 0.07;
     this.pointer = this.input.activePointer;
 
-    if (this.pointer.isDown){
+    if (this.pointer.x > 512 && this.pointer.isDown){
       this.chillMusic.pause();
       this.scene.start('playGame');
+    }
+
+    if (this.pointer.x < 512 && this.pointer.isDown){
+      this.scene.start('LeaderBoard');
     }
   }
 }

@@ -36,7 +36,7 @@ export default class Scene2 extends Phaser.Scene {
     this.scoreText = this.add.text(16, 360, 'Score: 0', { fontSize: '32px', fill: '#fff' });
     this.healthText = this.add.text(16, 420, 'Health: 0', { fontSize: '32px', fill: '#fff' });
 
-    this.cameras.main.setBounds(0, 0, 7700, 950);
+    this.cameras.main.setBounds(0, 0, 7650, 950);
 
     this.map = this.make.tilemap({ key: 'map' });
     this.tileset = this.map.addTilesetImage('tileset1', 'tiles');
@@ -66,8 +66,8 @@ export default class Scene2 extends Phaser.Scene {
 
     this.whiteSlimes = this.physics.add.group({
       key: 'whiteslime',
-      repeat: 10,
-      setXY: { x:225, y:0, stepX: 555 }
+      repeat: Phaser.Math.Between(20, 30),
+      setXY: { x:Phaser.Math.Between(300, 400), y:0, stepX: Phaser.Math.Between(100, 300) }
     });
     this.whiteSlimes.children.iterate(function (child) {
       child.health = 3;
@@ -77,7 +77,7 @@ export default class Scene2 extends Phaser.Scene {
 
     this.redSlimes = this.physics.add.group({
       key: 'redslime',
-      repeat: Phaser.Math.Between(20, 25),
+      repeat: Phaser.Math.Between(20, 35),
       setXY: { x:300, y:0, stepX: Phaser.Math.Between(200, 600), stepY: Phaser.Math.Between(0, 10) }
     });
     this.redSlimes.children.iterate(function (child) {
@@ -87,7 +87,7 @@ export default class Scene2 extends Phaser.Scene {
     });
 
     this.time.addEvent({
-      delay: 5000,
+      delay: 2000,
       callback: () => {
         this.redSlimes.children.iterate(function (child) {
           child.setVelocityY(-300);
@@ -99,9 +99,9 @@ export default class Scene2 extends Phaser.Scene {
     this.fireSkulls = this.physics.add.group();
 
     this.time.addEvent({
-      delay: 2500,
+      delay: 1000,
       callback: () => {
-        this.fireSkulls.create(Phaser.Math.Between(2000, 6300), Phaser.Math.Between(0, 900), 'skull');
+        this.fireSkulls.create(Phaser.Math.Between(2000, 7300), Phaser.Math.Between(0, 900), 'skull');
         this.fireSkulls.children.iterate(function (child) {
           child.setGravityY(-300);
           child.setScale(.7);
@@ -118,44 +118,17 @@ export default class Scene2 extends Phaser.Scene {
     this.littleSlimes = this.physics.add.group();
     this.bossBullets = this.physics.add.group();
 
-    /*this.time.addEvent({
-      delay: 10000,
+    this.time.addEvent({
+      delay: 1000,
       callback: () => {
-        this.greenSlimes.create(Phaser.Math.Between(1500, 6000), Phaser.Math.Between(500, 900), 'greenslime');
+        this.greenSlimes.create(Phaser.Math.Between(1500, 7300), Phaser.Math.Between(800, 1000), 'greenslime');
         this.greenSlimes.children.iterate(function (child) {
             child.setScale(1.7);
             child.setGravityY(-305);
             child.anims.play('floatslime', true);
             child.setSize(4, 4, true);
-            child.health = 5;
+            child.health = 2;
         });
-      },
-      loop: true
-    });*/
-
-    this.time.addEvent({
-      delay: 6000,
-      callback: () => {
-        this.greenSlimes.children.iterate(function (child) {
-          this.littleSlimes.create(child.x, child.y, 'littleslime');
-          this.littleSlimes.children.iterate(function (child) {
-            child.setScale(1.3);
-            child.setBounce(0.5);
-            child.setSize(1, 1, true)
-            child.health = 1;
-          })
-        });
-      },
-      loop: true
-    });
-
-    this.time.addEvent({
-      delay: 3000,
-      callback: () => {
-          this.littleSlimes.children.iterate(function (child) {
-            child.setVelocityY(-300);
-            child.setVelocityX(-30);
-          });
       },
       loop: true
     });
@@ -283,6 +256,27 @@ export default class Scene2 extends Phaser.Scene {
       frameRate: 5,
     });
 
+    const damageEnemy = (enemy, bullet) => {
+        enemy.health-=1;
+        enemy.setTint(0xff0000);
+        this.time.addEvent({
+          delay: 200,
+          callback: () => {
+            enemy.setTint(0xffffff);
+          },
+        });
+        bullet.destroy();
+        if (enemy.health <= 0){
+          this.score += 5;
+          enemy.destroy();
+          this.coins.create(enemy.x, enemy.y, 'coin');
+          this.coins.children.iterate( (child) => {
+            child.setScale(.2);
+            child.anims.play('coinidle', true);
+          });
+        }
+    };
+
     this.cursors = this.input.keyboard.createCursorKeys();
     this.physics.add.collider(this.player, this.platforms);
     this.physics.add.collider(this.coins, this.platforms);
@@ -309,26 +303,6 @@ export default class Scene2 extends Phaser.Scene {
     this.physics.add.collider(this.fireBullets, this.platforms, destroyBullet, null, this);
     this.physics.add.overlap(this.player, this.coins, collectCoin, null, this);
 
-    function damageEnemy(enemy, bullet) {
-        enemy.health-=1;
-        enemy.setTint(0xff0000);
-        this.time.addEvent({
-          delay: 200,
-          callback: () => {
-            enemy.setTint(0xffffff);
-          },
-        });
-        bullet.destroy();
-        if (enemy.health <= 0){
-          this.score += 5;
-          enemy.destroy();
-          this.coins.create(enemy.x, enemy.y, 'coin');
-          this.coins.children.iterate( function (child) {
-            child.setScale(.2);
-            child.anims.play('coinidle', true);
-          });
-        }
-    }
 
     function damageBoss(boss, bullet) {
       boss.health-=1;
@@ -447,10 +421,12 @@ export default class Scene2 extends Phaser.Scene {
     this.anims.staggerPlay('skullfly', this.fireSkulls.getChildren(), 0.03);
 
     this.time.addEvent({
-        delay: 528,
+        delay: 628,
         callback: () => {
           this.boss.anims.play('bossattack');
           this.bullet = this.bossBullets.create(this.boss.x, this.boss.y, 'bossbullet');
+          this.bullet = this.bossBullets.create(this.boss.x+10, this.boss.y+20, 'bossbullet');
+          this.bullet = this.bossBullets.create(this.boss.x+10, this.boss.y-20, 'bossbullet');
           this.bossBullets.children.iterate( function (child) {
             child.setScale(.3);
             child.setGravityY(-290);
