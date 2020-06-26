@@ -91,6 +91,7 @@ export default class Scene1 extends Phaser.Scene {
     this.pointer = this.input.activePointer;
 
     if (this.pointer.isDown){
+      this.chillMusic.pause();
       this.scene.start('playGame');
     }
   }
