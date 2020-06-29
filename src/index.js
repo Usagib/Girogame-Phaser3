@@ -2,6 +2,7 @@ import Scene1 from './Scene1';
 import Scene2 from './Scene2';
 import Scene3 from './Scene3';
 import Scene4 from './Scene4';
+import Scene5 from './Scene5';
 
 var config = {
   type: Phaser.AUTO,
@@ -15,7 +16,7 @@ var config = {
       debug: false
     }
   },
-  scene: [Scene1, Scene2, Scene3, Scene4]/*, {
+  scene: [Scene1, Scene2, Scene3, Scene4, Scene5]/*, {
     preload: preload,
     create: create,
     update: update

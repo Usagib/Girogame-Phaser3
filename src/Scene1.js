@@ -82,21 +82,24 @@ export default class Scene1 extends Phaser.Scene {
     this.bgFront.setScale(6);
 
     this.bootTxt = this.add.image(512, 300, 'menutext');
+
+    this.pointer = this.input.activePointer;
+    this.input.mouse.disableContextMenu();
+    this.input.on('pointerup',(pointer) => {
+      if (this.pointer.x > 512 && this.pointer.y > 500 && this.pointer.leftButtonReleased()){
+        this.chillMusic.pause();
+        this.scene.start('playGame');
+      }
+      if (this.pointer.x < 512 && this.pointer.y > 500 && this.pointer.leftButtonReleased()){
+        this.chillMusic.pause();
+        this.scene.start('highScores');
+      }
+    });
   }
 
   update() {
     this.bgMid1.tilePositionX += 0.01;
     this.bgMid2.tilePositionX += 0.04;
     this.bgFront.tilePositionX += 0.07;
-    this.pointer = this.input.activePointer;
-
-    if (this.pointer.x > 512 && this.pointer.isDown){
-      this.chillMusic.pause();
-      this.scene.start('playGame');
-    }
-
-    if (this.pointer.x < 512 && this.pointer.isDown){
-      this.scene.start('LeaderBoard');
-    }
   }
 }

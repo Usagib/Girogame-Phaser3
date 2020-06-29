@@ -1,6 +1,6 @@
-export default class Scene3 extends Phaser.Scene {
+export default class Scene5 extends Phaser.Scene {
   constructor(){
-    super('gameOver');
+    super('highScores');
   }
   init(data){
     console.log(data);
@@ -14,16 +14,13 @@ export default class Scene3 extends Phaser.Scene {
     this.chillMusic.play({loop: true, volume: 0.1});
     this.add.image(512, 300, 'gameoverscreen');
     this.add.text(350, 500, 'Score'+this.finalScore, { fontSize: '32px', fill: '#fff'});
-    this.pointer = this.input.activePointer;
-    this.input.mouse.disableContextMenu();
-    this.input.on('pointerup',(pointer) => {
-      if (this.pointer.leftButtonReleased()){
-        this.chillMusic.pause();
-        this.scene.start('mainMenu');
-      }
-    });
   }
   update() {
+    this.pointer = this.input.activePointer;
 
+    if (this.pointer.isDown){
+      this.chillMusic.pause();
+      this.scene.start('mainMenu');
+    }
   }
 }

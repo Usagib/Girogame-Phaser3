@@ -48,7 +48,6 @@ export default class Scene2 extends Phaser.Scene {
 
     this.player = this.physics.add.sprite(100, 450, 'robot');
     this.player.health = 100;
-    this.player.setCollideWorldBounds(true);
     this.boss = this.physics.add.sprite(7380, 300, 'bossidle');
     this.boss.setGravityY(-300);
     this.boss.setScale(1.3);
@@ -478,8 +477,8 @@ export default class Scene2 extends Phaser.Scene {
       this.player.setVelocityX(-160);
       this.player.anims.play('walk', true);
       this.cam.scrollX -= 4;
-      this.scoreText.x+=4;
-      this.healthText.x+=4;
+      this.scoreText.x+=6;
+      this.healthText.x+=6;
       this.bgMid1.tilePositionX -= 0.1;
       this.bgMid2.tilePositionX -= 0.2;
       this.bgFront.tilePositionX -= 0.3;
@@ -487,8 +486,8 @@ export default class Scene2 extends Phaser.Scene {
       this.player.setVelocityX(160);
       this.player.anims.play('walk', true);
       this.cam.scrollX += 4;
-      this.scoreText.x+= 4;
-      this.healthText.x+= 4;
+      this.scoreText.x+= 6;
+      this.healthText.x+= 6;
       this.bgMid1.tilePositionX += 0.1;
       this.bgMid2.tilePositionX += 0.2;
       this.bgFront.tilePositionX += 0.3;
