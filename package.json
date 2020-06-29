@@ -1,7 +1,7 @@
 {
-  "name": "phaser3-intro",
+  "name": "js-capstone",
   "version": "1.0.0",
-  "description": "Phaser 3 game engine getting started tutorial",
+  "description": "platform game built with phaser 3",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,15 +11,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Usagib/phaser3-intro.git"
+    "url": "git+https://github.com/Usagib/js-capstone.git"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Usagib/phaser3-intro/issues"
+    "url": "https://github.com/Usagib/js-capstone/issues"
   },
-  "homepage": "https://github.com/Usagib/phaser3-intro#readme",
+  "homepage": "https://github.com/Usagib/js-capstone#readme",
   "dependencies": {
     "phaser": "^3.23.0"
   },
