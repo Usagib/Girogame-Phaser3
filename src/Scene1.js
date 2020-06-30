@@ -1,5 +1,5 @@
+import leaderboardFetch from './Leaderboard';
 export default class Scene1 extends Phaser.Scene {
-
   constructor() {
     super('mainMenu');
   }
@@ -92,6 +92,7 @@ export default class Scene1 extends Phaser.Scene {
       }
       if (this.pointer.x < 512 && this.pointer.y > 500 && this.pointer.leftButtonReleased()){
         this.chillMusic.pause();
+        leaderboardFetch();
         this.scene.start('highScores');
       }
     });
