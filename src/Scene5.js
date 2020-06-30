@@ -17,7 +17,6 @@ export default class Scene5 extends Phaser.Scene {
     return 0;
   });
     this.add.text(350, 100, 'LeaderBoard', { fontSize: '32px', fill: '#fff'});
-    console.log(sorted);
     this.add.text(350, 200, this.board[1].user+' : '+this.board[1].score, { fontSize: '32px', fill: '#fff'});
     this.add.text(350, 300, this.board[2].user+' : '+this.board[2].score, { fontSize: '32px', fill: '#fff'});
     this.add.text(350, 400, this.board[3].user+' : '+this.board[3].score, { fontSize: '32px', fill: '#fff'});

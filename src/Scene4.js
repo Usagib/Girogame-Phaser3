@@ -4,8 +4,8 @@ export default class Scene4 extends Phaser.Scene {
     super('gameWin');
   }
   init(data){
-    this.leadername = data.name;
     this.finalScore = data.score;
+    this.leadername = data.name;
   }
   preload() {
     this.load.image('gamewinscreen', '../src/assets/gamewinscreen.png');

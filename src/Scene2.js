@@ -8,6 +8,7 @@ export default class Scene2 extends Phaser.Scene {
   create () {
     this.score = 0;
     this.gameOver = false;
+    this.gameWin = false;
 
     this.music = this.sound.add('rudebuster');
     this.bossMusic = this.sound.add('orchestrabuster');
@@ -239,7 +240,6 @@ export default class Scene2 extends Phaser.Scene {
     const damageBoss = (boss, bullet) => {
       boss.health-=1;
       boss.setTint(0xff0000);
-      console.log(boss.health);
       this.time.addEvent({
         delay: 200,
         callback: () => {
@@ -256,7 +256,7 @@ export default class Scene2 extends Phaser.Scene {
         boss.destroy();
         this.physics.pause();
         this.bossMusic.pause();
-        this.scene.start('gameWin', {name: this.nameGen, score : this.score});
+        this.gameWin = true;
       }
     };
 
@@ -274,9 +274,7 @@ export default class Scene2 extends Phaser.Scene {
         },
       });
       if (player.health <= 0){
-        this.score -= 1000;
         this.gameOver = true;
-        console.log('game over', {name: this.nameGen, score : this.score});
       }
     };
 
@@ -469,6 +467,13 @@ export default class Scene2 extends Phaser.Scene {
       this.bossMusic.pause();
       this.music.pause();
       this.scene.start('gameOver', {name: this.nameGen, score: this.score});
+      return;
+    }
+
+    if (this.gameWin) {
+      this.bossMusic.pause();
+      this.music.pause();
+      this.scene.start('gameWin', {name: this.nameGen, score: this.score});
       return;
     }
 

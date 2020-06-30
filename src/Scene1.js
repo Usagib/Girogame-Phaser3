@@ -91,11 +91,11 @@ export default class Scene1 extends Phaser.Scene {
         this.scene.start('playGame');
       }
       if (this.pointer.x < 512 && this.pointer.y > 500 && this.pointer.leftButtonReleased()){
+        this.chillMusic.pause();
         leaderboardFetch().then(data => {
           const {
             result
           } = data;
-          this.chillMusic.pause();
           this.scene.start('highScores', { board: result });
         });
       }

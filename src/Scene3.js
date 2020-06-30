@@ -4,7 +4,6 @@ export default class Scene3 extends Phaser.Scene {
     super('gameOver');
   }
   init(data){
-    console.log(data);
     this.finalScore = data.score;
     this.leadername = data.name;
   }
