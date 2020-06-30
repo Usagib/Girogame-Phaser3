@@ -1,9 +1,10 @@
+import leaderboardPost from './LeaderboardPost';
 export default class Scene4 extends Phaser.Scene {
   constructor(){
     super('gameWin');
   }
   init(data){
-    console.log(data);
+    this.leadername = data.name;
     this.finalScore = data.score;
   }
   preload() {
@@ -19,6 +20,7 @@ export default class Scene4 extends Phaser.Scene {
     this.input.on('pointerup',(pointer) => {
       if (this.pointer.leftButtonReleased()){
         this.chillMusic.pause();
+        leaderboardPost(this.leadername, this.finalScore);
         this.scene.start('mainMenu');
       }
     });

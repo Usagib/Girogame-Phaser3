@@ -1,3 +1,4 @@
+import leaderboardPost from './LeaderboardPost';
 export default class Scene3 extends Phaser.Scene {
   constructor(){
     super('gameOver');
@@ -5,6 +6,7 @@ export default class Scene3 extends Phaser.Scene {
   init(data){
     console.log(data);
     this.finalScore = data.score;
+    this.leadername = data.name;
   }
   preload() {
     this.load.image('gameoverscreen', '../src/assets/gameoverscreen.png');
@@ -19,6 +21,7 @@ export default class Scene3 extends Phaser.Scene {
     this.input.on('pointerup',(pointer) => {
       if (this.pointer.leftButtonReleased()){
         this.chillMusic.pause();
+        leaderboardPost(this.leadername, this.finalScore);
         this.scene.start('mainMenu');
       }
     });

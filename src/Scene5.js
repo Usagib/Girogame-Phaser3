@@ -3,24 +3,31 @@ export default class Scene5 extends Phaser.Scene {
     super('highScores');
   }
   init(data){
-    console.log(data);
-    this.finalScore = data.score;
+    this.board = data.board;
   }
-  preload() {
-    this.load.image('gameoverscreen', '../src/assets/gameoverscreen.png');
-  }
+  preload() {}
   create() {
-    this.chillMusic = this.sound.add('chillbuster');
-    this.chillMusic.play({loop: true, volume: 0.1});
-    this.add.image(512, 300, 'gameoverscreen');
-    this.add.text(350, 500, 'Score'+this.finalScore, { fontSize: '32px', fill: '#fff'});
-  }
-  update() {
-    this.pointer = this.input.activePointer;
-
-    if (this.pointer.isDown){
-      this.chillMusic.pause();
-      this.scene.start('mainMenu');
+  this.board.sort((a, b) => {
+    if (a.score < b.score) {
+      return 1;
     }
+    if (a.score > b.score) {
+      return -1;
+    }
+    return 0;
+  });
+    this.add.text(350, 100, 'LeaderBoard', { fontSize: '32px', fill: '#fff'});
+    console.log(sorted);
+    this.add.text(350, 200, this.board[1].user+' : '+this.board[1].score, { fontSize: '32px', fill: '#fff'});
+    this.add.text(350, 300, this.board[2].user+' : '+this.board[2].score, { fontSize: '32px', fill: '#fff'});
+    this.add.text(350, 400, this.board[3].user+' : '+this.board[3].score, { fontSize: '32px', fill: '#fff'});
+    this.pointer = this.input.activePointer;
+    this.input.mouse.disableContextMenu();
+    this.input.on('pointerup',(pointer) => {
+      if (this.pointer.leftButtonReleased()){
+        this.scene.start('mainMenu');
+      }
+    });
   }
+  update() {}
 }

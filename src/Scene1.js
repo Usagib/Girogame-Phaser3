@@ -1,4 +1,4 @@
-import leaderboardFetch from './Leaderboard';
+import leaderboardFetch from './LeaderboardFetch';
 export default class Scene1 extends Phaser.Scene {
   constructor() {
     super('mainMenu');
@@ -91,9 +91,13 @@ export default class Scene1 extends Phaser.Scene {
         this.scene.start('playGame');
       }
       if (this.pointer.x < 512 && this.pointer.y > 500 && this.pointer.leftButtonReleased()){
-        this.chillMusic.pause();
-        leaderboardFetch();
-        this.scene.start('highScores');
+        leaderboardFetch().then(data => {
+          const {
+            result
+          } = data;
+          this.chillMusic.pause();
+          this.scene.start('highScores', { board: result });
+        });
       }
     });
   }

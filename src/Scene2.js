@@ -48,6 +48,7 @@ export default class Scene2 extends Phaser.Scene {
 
     this.player = this.physics.add.sprite(100, 450, 'robot');
     this.player.health = 100;
+    this.nameGen = 'Player'+ Phaser.Math.Between(1, 20);
     this.boss = this.physics.add.sprite(7380, 300, 'bossidle');
     this.boss.setGravityY(-300);
     this.boss.setScale(1.3);
@@ -255,7 +256,7 @@ export default class Scene2 extends Phaser.Scene {
         boss.destroy();
         this.physics.pause();
         this.bossMusic.pause();
-        this.scene.start('gameWin', {score : this.score});
+        this.scene.start('gameWin', {name: this.nameGen, score : this.score});
       }
     };
 
@@ -275,7 +276,7 @@ export default class Scene2 extends Phaser.Scene {
       if (player.health <= 0){
         this.score -= 1000;
         this.gameOver = true;
-        console.log('game over');
+        console.log('game over', {name: this.nameGen, score : this.score});
       }
     };
 
@@ -294,7 +295,6 @@ export default class Scene2 extends Phaser.Scene {
       });
       if (player.health <= 0){
         this.gameOver = true;
-        console.log('game over');
       }
     };
 
@@ -333,7 +333,6 @@ export default class Scene2 extends Phaser.Scene {
       });
       if (player.health <= 0){
         this.gameOver = true;
-        console.log('game over');
       }
     };
 
@@ -469,7 +468,7 @@ export default class Scene2 extends Phaser.Scene {
     if (this.gameOver) {
       this.bossMusic.pause();
       this.music.pause();
-      this.scene.start('gameOver', {score : this.score});
+      this.scene.start('gameOver', {name: this.nameGen, score: this.score});
       return;
     }
 
