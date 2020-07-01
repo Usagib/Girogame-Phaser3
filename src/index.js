@@ -4,7 +4,7 @@ import Scene3 from './Scene3';
 import Scene4 from './Scene4';
 import Scene5 from './Scene5';
 
-var config = {
+const config = {
   type: Phaser.AUTO,
   width: 1024,
   height: 600,
@@ -13,13 +13,11 @@ var config = {
     default: 'arcade',
     arcade: {
       gravity: { y: 300 },
-      debug: false
-    }
+      debug: false,
+    },
   },
-  scene: [Scene1, Scene2, Scene3, Scene4, Scene5]/*, {
-    preload: preload,
-    create: create,
-    update: update
-  }*/
+  scene: [Scene1, Scene2, Scene3, Scene4, Scene5],
 };
-var game = new Phaser.Game(config);
+/* eslint-diable */
+const game = new Phaser.Game(config);
+/* eslint-enable */
