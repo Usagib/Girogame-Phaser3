@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<coverage generated="1593595861687" clover="3.2.0">
+  <project timestamp="1593595861687" name="All files">
+    <metrics statements="20" coveredstatements="18" conditionals="0" coveredconditionals="0" methods="2" coveredmethods="2" elements="22" coveredelements="20" complexity="0" loc="20" ncloc="20" packages="1" files="2" classes="2"/>
+    <file name="LeaderboardFetch.js" path="/home/conejitomaya/Projects/js-capstone/src/helpers/test/functions/LeaderboardFetch.js">
+      <metrics statements="9" coveredstatements="8" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="2" count="2" type="stmt"/>
+      <line num="3" count="2" type="stmt"/>
+      <line num="4" count="2" type="stmt"/>
+      <line num="5" count="2" type="stmt"/>
+      <line num="6" count="2" type="stmt"/>
+      <line num="7" count="0" type="stmt"/>
+      <line num="9" count="2" type="stmt"/>
+      <line num="13" count="1" type="stmt"/>
+    </file>
+    <file name="LeaderboardPost.js" path="/home/conejitomaya/Projects/js-capstone/src/helpers/test/functions/LeaderboardPost.js">
+      <metrics statements="11" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="1" coveredmethods="1"/>
+      <line num="1" count="1" type="stmt"/>
+      <line num="2" count="1" type="stmt"/>
+      <line num="3" count="1" type="stmt"/>
+      <line num="4" count="1" type="stmt"/>
+      <line num="8" count="1" type="stmt"/>
+      <line num="15" count="1" type="stmt"/>
+      <line num="16" count="1" type="stmt"/>
+      <line num="17" count="1" type="stmt"/>
+      <line num="18" count="0" type="stmt"/>
+      <line num="20" count="1" type="stmt"/>
+      <line num="24" count="1" type="stmt"/>
+    </file>
+  </project>
+</coverage>

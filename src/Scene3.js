@@ -1,4 +1,4 @@
-import leaderboardPost from './LeaderboardPost';
+import leaderboardPost from './helpers/LeaderboardPost';
 export default class Scene3 extends Phaser.Scene {
   constructor(){
     super('gameOver');

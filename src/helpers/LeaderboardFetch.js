@@ -6,5 +6,4 @@ const leaderboardFetch = async() => {
   return data;
 };
 
-
 export default leaderboardFetch;

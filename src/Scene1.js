@@ -1,4 +1,4 @@
-import leaderboardFetch from './LeaderboardFetch';
+import leaderboardFetch from './helpers/LeaderboardFetch';
 export default class Scene1 extends Phaser.Scene {
   constructor() {
     super('mainMenu');
