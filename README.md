@@ -91,7 +91,7 @@ npm install npm@latest -g
 
 1. Clone this repo
 ```sh
-git clone https:://github.com/SantiagoGuerra/weather-app.git
+git clone https:://github.com/Usagib/js-capstone.git
 ```
 2. run the following command
 ```sh
@@ -106,19 +106,19 @@ npm run start
 
 the planning and development parts for this project were divided in 16, as follows,
 
-* Part I: Phaser 3 game engine research
-* Part II: Phaser 3 docs platformer game build
-* Part III: Software, Graphic and Assets design and planning
-* Part IV: Enviroment and dependencies setup
-* Part V: Assets sprite and animations create
-* Part VI: Assets animation and tweens create
-* Part VII: World tilemap create, sprite animation fix
-* Part VIII: World tilemap render
-* Part IX: Physics behaivour fix, map interaction created
-* Part X: Dinamyc object creation create
-* Part XI: Parallax movement background create
-* Part XII: Collision events create, hitboxes fix
-* Part XIII: Game physycs fix, Game logic create
+* Part I: Researched Phaser 3 game engine
+* Part II: Built Phaser 3 docs platformer game
+* Part III: Designed and planned Software, Graphics and Assets
+* Part IV: Setup enviroment and dependencies
+* Part V: Created assets sprite and animations
+* Part VI: Created assets animation and tweens
+* Part VII: Fixed world tilemap create, sprite animation
+* Part VIII: Fixed world tilemap render
+* Part IX: Fixed physics behaivour, created map interaction
+* Part X: Created dinamyc object creation
+* Part XI: Created Parallax movement background create
+* Part XII: Fixed collision events and hitboxes
+* Part XIII: Game physycs fix, Game logic created
 * Part XIV: Scene moduling
 * Part XV: Code refractoring
 * Part XVI: Testing, Style corrections, Deployment
