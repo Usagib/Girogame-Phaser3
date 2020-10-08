@@ -6,10 +6,10 @@
     <img src="readme-assets/logo.png" alt="Logo" width="120">
   </a>
 
-  <h3 align="center">Giro : Phaser 3 developed action platformer</h3>
+  <h3 align="center">Giro: Phaser 3 developed action platformer</h3>
 
   <p align="center">
-    shoot and rush your way around the industrial zone!
+    Shoot and rush your way around the industrial zone!
     <br />
     <a href="https://github.com/Usagib/js-capstone"><strong>Explore the docs »</strong></a>
     <br />
@@ -40,7 +40,7 @@
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
-- [Acknowledgements](#acknowledgements)
+- [Acknowledgments](#acknowledgements)
 
 ## Play The Game
 
@@ -53,7 +53,7 @@ Watch the gameplay by [Juego sin Manos](https://www.youtube.com/channel/UCAVokpQ
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Giro is an independent action platformer developed in Phaser 3 for learning purposes
+Giro is an independent action platformer developed in Phaser3
 
 ## Highlights
 
@@ -63,10 +63,10 @@ Giro is an independent action platformer developed in Phaser 3 for learning purp
 
 ### Controls
 
-* Left, Right Keys : Move Giro
-* Up Key : Jump
-* Spacebar : Fire shoot
-* Left click : Select (When Available)
+* Left, Right Keys: Move Giro
+* Up Key: Jump
+* Spacebar: Fire shoot
+* Left click: Select (When Available)
 
 ### Objective
 
@@ -102,9 +102,7 @@ npm install
 npm run start
 ```
 
-## Learning Path
-
-the planning and development parts for this project were divided in 16, as follows,
+## Development Path
 
 * Part I: Researched Phaser 3 game engine
 * Part II: Built Phaser 3 docs platformer game
@@ -116,21 +114,19 @@ the planning and development parts for this project were divided in 16, as follo
 * Part VIII: Fixed world tilemap render
 * Part IX: Fixed physics behaivour, created map interaction
 * Part X: Created dinamyc object creation
-* Part XI: Created Parallax movement background create
+* Part XI: Created Parallax movement background
 * Part XII: Fixed collision events and hitboxes
 * Part XIII: Game physycs fix, Game logic created
 * Part XIV: Scene moduling
-* Part XV: Code refractoring
+* Part XV: Code refactoring
 * Part XVI: Testing, Style corrections, Deployment
-
-
 
 <!-- CONTRIBUTING -->
 ## Contributing
 
 1. Fork the Project
 2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the Branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
@@ -141,11 +137,13 @@ Distributed under the MIT License.
 <!-- CONTACT -->
 ## Contact
 
-Eduardo Bonilla Cáceres - eduardobonillac@gmail.com
+* Eduardo Bonilla Cáceres - eduardobonillac@gmail.com
+* [My Portfolio](https://usagib.surge.sh)
+* [My Twitter](https://twitter.com/UsagiBonilla)
 
 
 <!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
+## Acknowledgments
 * [Microverse](https://www.microverse.org/)
 * [Music by Toby Fox](https://twitter.com/tobyfox)
 * [Assets by Open Game Art](https://opengameart.org/forums/2d-art)
