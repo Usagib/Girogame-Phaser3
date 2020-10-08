@@ -36,7 +36,8 @@
 - [Built With](#built-with)
 - [Prerequisites](#prerequisites)
 - [Run it Locally](#run-it-locally)
-- [Learning Path](#learning-path)
+- [Development Path](#development-path)
+- [Upcoming Features](#upcoming-features)
 - [Contributing](#contributing)
 - [License](#license)
 - [Contact](#contact)
@@ -120,6 +121,12 @@ npm run start
 * Part XIV: Scene moduling
 * Part XV: Code refactoring
 * Part XVI: Testing, Style corrections, Deployment
+
+## Upcoming Features
+
+* Level 2
+* Easy - Hard difficulty
+* Smoother animations
 
 <!-- CONTRIBUTING -->
 ## Contributing
